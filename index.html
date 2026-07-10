@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Md. Abu Hanip, Civil Eng. — Structural &amp; Infrastructure Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{
+    --bg:#0F1115;
+    --bg-raised:#15181e;
+    --concrete:#4B5563;
+    --steel:#6B7280;
+    --white:#F8FAFC;
+    --blueprint:#2563EB;
+    --gold:#C89B3C;
+    --cyan:#38BDF8;
+    --border:rgba(248,250,252,0.08);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--white);
+    font-family:'Manrope',sans-serif;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{font-family:'Inter',sans-serif;letter-spacing:-0.03em;}
+  .num{font-family:'Space Grotesk',sans-serif;}
+  .eyebrow{
+    font-size:0.6875rem;letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--gold);font-weight:600;
+  }
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--blueprint);color:white;}
+
+  /* ---- Site-wide premium animated background (abstract structural mesh) ---- */
+  #bg-mesh{
+    position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.55;
+  }
+  .bg-noise{
+    position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.035;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---- Scroll progress ---- */
+  #progress{
+    position:fixed;top:0;left:0;height:2px;width:0%;z-index:200;
+    background:linear-gradient(90deg,var(--blueprint),var(--cyan),var(--gold));
+    box-shadow:0 0 8px rgba(56,189,248,0.6);
+  }
+
+  /* ---- Cursor glow ---- */
+  #cursor-glow{
+    position:fixed;top:0;left:0;width:420px;height:420px;border-radius:50%;
+    pointer-events:none;z-index:1;transform:translate(-50%,-50%);
+    background:radial-gradient(circle, rgba(37,99,235,0.10) 0%, transparent 70%);
+    transition:opacity .3s;will-change:transform;
+  }
+  @media(max-width:900px){#cursor-glow{display:none;}}
+
+  /* ---- Blueprint grid backdrop ---- */
+  .bp-grid{
+    position:absolute;inset:-10% -10%;z-index:0;pointer-events:none;
+    background-image:
+      linear-gradient(rgba(37,99,235,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(37,99,235,0.08) 1px, transparent 1px);
+    background-size:48px 48px;
+    animation:gridDrift 60s linear infinite;
+  }
+  @keyframes gridDrift{ from{background-position:0 0;} to{background-position:480px 480px;} }
+  .bp-vignette{
+    position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(ellipse at 50% 30%, transparent 0%, var(--bg) 78%);
+  }
+
+  /* ---- Split-text hero reveal ---- */
+  .split-word{display:inline-block;overflow:hidden;vertical-align:top;}
+  .split-word span{display:inline-block;will-change:transform;}
+
+  /* ---- Magnetic buttons ---- */
+  .magnetic{will-change:transform;}
+
+  /* ---- Section eyebrow underline draw ---- */
+  .eyebrow-line{
+    display:inline-block;width:28px;height:1px;background:var(--gold);
+    margin-right:10px;transform-origin:left;transform:scaleX(0);
+  }
+
+  /* ---- Nav ---- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    padding:22px 5vw;display:flex;align-items:center;justify-content:space-between;
+    transition:all .4s cubic-bezier(.16,1,.3,1);
+    background:transparent;
+    border-bottom:1px solid transparent;
+  }
+  nav.solid{
+    background:rgba(15,17,21,0.85);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border);padding:16px 5vw;
+  }
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;letter-spacing:-0.01em;}
+  .logo span{color:var(--gold);}
+  .nav-links{display:flex;gap:2.4rem;font-size:0.875rem;font-weight:500;color:var(--white);}
+  .nav-links a{position:relative;opacity:0.85;transition:opacity .2s;}
+  .nav-links a::after{
+    content:'';position:absolute;left:0;bottom:-6px;width:0;height:1px;background:var(--gold);
+    transition:width .3s cubic-bezier(.16,1,.3,1);
+  }
+  .nav-links a:hover{opacity:1;}
+  .nav-links a:hover::after{width:100%;}
+  .nav-cta{
+    padding:0.6rem 1.3rem;border:1px solid var(--blueprint);border-radius:2px;
+    font-size:0.8rem;font-weight:600;background:rgba(37,99,235,0.08);
+    transition:all .25s;
+  }
+  .nav-cta:hover{background:var(--blueprint);}
+  @media(max-width:900px){.nav-links{display:none;}}
+
+  /* ---- Hero: a drawing sheet, not a template split-hero ---- */
+  .hero{
+    position:relative;min-height:100vh;overflow:hidden;
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:110px 4vw 0;
+  }
+  .sheet-border{
+    position:absolute;inset:24px;border:1px solid rgba(248,250,252,0.09);z-index:1;pointer-events:none;
+  }
+  .sheet-border i{position:absolute;width:14px;height:14px;border-color:var(--gold);border-style:solid;border-width:0;}
+  .sheet-border i:nth-child(1){top:-1px;left:-1px;border-top-width:2px;border-left-width:2px;}
+  .sheet-border i:nth-child(2){top:-1px;right:-1px;border-top-width:2px;border-right-width:2px;}
+  .sheet-border i:nth-child(3){bottom:-1px;left:-1px;border-bottom-width:2px;border-left-width:2px;}
+  .sheet-border i:nth-child(4){bottom:-1px;right:-1px;border-bottom-width:2px;border-right-width:2px;}
+  .sheet-meta{
+    position:relative;z-index:3;display:flex;justify-content:space-between;align-items:flex-start;
+    font-family:'Space Grotesk',monospace;font-size:0.68rem;letter-spacing:0.1em;color:var(--steel);
+    padding:0 1.6rem;text-transform:uppercase;
+  }
+  .sheet-meta .dot{width:6px;height:6px;background:var(--gold);border-radius:50%;box-shadow:0 0 10px var(--gold);display:inline-block;margin-right:8px;}
+  .sheet-meta span.hl{color:var(--gold);}
+  .sheet-meta .right{text-align:right;}
+
+  .hero-watermark{
+    position:absolute;top:38%;left:50%;z-index:0;pointer-events:none;user-select:none;
+    transform:translate(-50%,-50%);
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(9rem,32vw,26rem);
+    line-height:1;letter-spacing:-0.04em;color:transparent;
+    -webkit-text-stroke:1px rgba(248,250,252,0.05);
+    white-space:nowrap;
+  }
+
+  .hero-headline{
+    position:relative;z-index:3;padding:2.2rem 1.6rem 0;max-width:1180px;
+  }
+  .hero-headline h1{display:block;}
+  .hero-headline .line{
+    display:block;font-weight:800;letter-spacing:-0.035em;line-height:0.94;
+  }
+  .line-a{
+    font-size:clamp(1.3rem,3vw,2.1rem);font-weight:500;color:var(--steel);
+    font-family:'Manrope',sans-serif;letter-spacing:-0.01em;margin-bottom:0.2rem;
+  }
+  .line-b{
+    font-size:clamp(2.2rem,5.6vw,4.4rem);font-weight:700;color:var(--white);
+  }
+  .line-c{
+    font-size:clamp(3.4rem,10.5vw,9.5rem);font-weight:800;margin:0.05em 0;
+    color:var(--cyan);
+  }
+  .line-d{
+    font-size:clamp(1.1rem,2.4vw,1.6rem);font-weight:400;color:var(--steel);
+    letter-spacing:-0.01em;margin-top:0.3rem;
+  }
+  .hero-headline p.sub{
+    font-size:1.02rem;color:var(--steel);line-height:1.6;max-width:480px;margin:1.6rem 0 2rem;
+  }
+  .hero-ctas{display:flex;gap:1rem;flex-wrap:wrap;}
+  .btn-primary{
+    padding:0.9rem 1.8rem;background:var(--blueprint);color:white;border-radius:3px;
+    font-weight:600;font-size:0.9rem;transition:transform .22s cubic-bezier(.16,1,.3,1), box-shadow .22s;
+    display:inline-flex;align-items:center;gap:8px;position:relative;overflow:hidden;
+  }
+  .btn-primary::before{
+    content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);
+    transform:translateX(-120%);transition:transform .6s cubic-bezier(.16,1,.3,1);
+  }
+  .btn-primary:hover::before{transform:translateX(120%);}
+  .btn-primary:hover{box-shadow:0 10px 30px rgba(37,99,235,0.35);}
+  .btn-ghost{
+    padding:0.9rem 1.8rem;border:1px solid var(--border);border-radius:3px;
+    font-weight:600;font-size:0.9rem;transition:all .22s;display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn-ghost:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px);}
+
+  /* ---- Live beam instrument (the hero's signature element) ---- */
+  .beam-stage{
+    position:relative;z-index:3;margin-top:2.4rem;padding:0 1.6rem 2.2rem;
+  }
+  .beam-caption{
+    font-size:0.76rem;color:var(--steel);margin-top:0.7rem;max-width:420px;
+    font-family:'Space Grotesk',monospace;letter-spacing:0.01em;
+  }
+  .beam-caption b{color:var(--cyan);font-weight:600;}
+  #beam-svg{width:100%;height:auto;display:block;overflow:visible;touch-action:none;cursor:crosshair;}
+  .beam-hud{
+    position:absolute;top:-8px;right:1.6rem;display:flex;gap:1.8rem;
+    font-family:'Space Grotesk',monospace;
+  }
+  .beam-hud div{text-align:right;}
+  .beam-hud .hud-label{font-size:0.62rem;color:var(--steel);letter-spacing:0.14em;text-transform:uppercase;}
+  .beam-hud .hud-val{font-size:1.1rem;font-weight:700;color:var(--gold);}
+  @media(max-width:760px){
+    .beam-hud{position:static;justify-content:flex-start;margin-bottom:0.8rem;gap:1.2rem;}
+    .hero{padding-top:96px;}
+  }
+
+  .title-block{
+    position:relative;z-index:3;display:flex;justify-content:space-between;align-items:center;
+    padding:1rem 1.6rem 1.4rem;border-top:1px solid rgba(248,250,252,0.09);
+    font-family:'Space Grotesk',monospace;font-size:0.66rem;letter-spacing:0.08em;color:var(--steel);
+    text-transform:uppercase;
+  }
+  .title-block b{color:var(--white);font-weight:600;}
+  .title-block .tb-group{display:flex;gap:2.2rem;}
+  @media(max-width:640px){.title-block .tb-group{gap:1.1rem;}.title-block{flex-wrap:wrap;gap:0.6rem;}}
+
+  .hero-meta{display:none;} /* legacy selector kept for JS compat, unused now */
+
+  section{position:relative;padding:8rem 5vw;overflow:hidden;}
+  section > *:not(.sec-num){position:relative;z-index:1;}
+  .sec-num{
+    position:absolute;top:0.5rem;right:2vw;z-index:0;pointer-events:none;user-select:none;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;line-height:1;
+    font-size:clamp(6rem,15vw,14rem);color:transparent;
+    -webkit-text-stroke:1px rgba(248,250,252,0.055);
+  }
+  .section-head{max-width:640px;margin-bottom:4rem;}
+  .section-head h2{font-size:clamp(1.9rem,3.4vw,2.8rem);font-weight:700;margin-top:0.8rem;}
+  .section-head p{color:var(--steel);margin-top:1rem;font-size:1rem;line-height:1.6;}
+
+  /* ---- About ---- */
+  .about-grid{display:grid;grid-template-columns:0.85fr 1.15fr;gap:5rem;align-items:start;}
+  @media(max-width:900px){.about-grid{grid-template-columns:1fr;}}
+  .about-frame{
+    position:relative;border:1px solid var(--blueprint);padding:14px;
+  }
+  .about-frame::before{
+    content:'';position:absolute;top:-1px;left:-1px;width:22px;height:22px;
+    border-top:2px solid var(--gold);border-left:2px solid var(--gold);
+  }
+  .about-frame::after{
+    content:'';position:absolute;bottom:-1px;right:-1px;width:22px;height:22px;
+    border-bottom:2px solid var(--gold);border-right:2px solid var(--gold);
+  }
+  .about-frame img{width:100%;display:block;filter:grayscale(30%) contrast(1.05);}
+  .about-copy p{color:#C7CBD3;line-height:1.75;margin-bottom:1.2rem;font-size:0.98rem;}
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:2.6rem;}
+  @media(max-width:640px){.stat-row{grid-template-columns:repeat(2,1fr);}}
+  .stat-card{border:1px solid var(--border);padding:1.4rem 1.2rem;border-radius:4px;background:var(--bg-raised);}
+  .stat-card .num{font-size:2.1rem;font-weight:700;color:var(--cyan);}
+  .stat-card p{font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.05em;margin-top:0.3rem;}
+
+  /* ---- Expertise ---- */
+  .expertise-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
+  @media(max-width:900px){.expertise-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:600px){.expertise-grid{grid-template-columns:1fr;}}
+  .ex-card{
+    border:1px solid var(--border);padding:1.8rem;border-radius:4px;background:var(--bg-raised);
+    transition:all .3s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden;
+  }
+  .ex-card:hover{transform:translateY(-4px);border-color:var(--blueprint);box-shadow:0 20px 40px rgba(0,0,0,0.35);}
+  .ex-card .idx{font-family:'Space Grotesk';font-size:0.75rem;color:var(--gold);letter-spacing:0.1em;}
+  .ex-card h3{font-size:1.05rem;font-weight:600;margin:0.7rem 0 0.5rem;}
+  .ex-card p{font-size:0.85rem;color:var(--steel);line-height:1.55;}
+
+  /* ---- Projects ---- */
+  .proj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.4rem;}
+  @media(max-width:800px){.proj-grid{grid-template-columns:1fr;}}
+  .proj-card{
+    position:relative;border-radius:4px;overflow:hidden;border:1px solid var(--border);
+    aspect-ratio:4/3;background:linear-gradient(135deg,#1b1f27,#0F1115);
+  }
+  .proj-card.tall{aspect-ratio:4/5;}
+  .proj-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.16,1,.3,1);filter:grayscale(20%) brightness(0.75);}
+  .proj-card:hover img{transform:scale(1.06);filter:grayscale(0%) brightness(0.55);}
+  .proj-overlay{
+    position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:1.6rem;
+    background:linear-gradient(180deg,transparent 40%, rgba(15,17,21,0.95) 100%);
+  }
+  .proj-overlay .tag{font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:0.4rem;}
+  .proj-overlay h3{font-size:1.2rem;font-weight:700;}
+  .proj-meta{display:flex;gap:1.2rem;margin-top:0.6rem;font-size:0.75rem;color:var(--steel);}
+
+  /* ---- Process ---- */
+  .process-track{display:flex;overflow-x:auto;gap:0;padding-bottom:1rem;}
+  .process-step{flex:0 0 200px;padding-right:1.5rem;position:relative;}
+  .process-step::after{
+    content:'';position:absolute;top:22px;left:44px;right:0;height:1px;background:var(--border);
+  }
+  .process-step:last-child::after{display:none;}
+  .step-num{
+    width:44px;height:44px;border:1px solid var(--gold);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';
+    font-size:0.85rem;color:var(--gold);margin-bottom:1rem;background:var(--bg);position:relative;z-index:1;
+  }
+  .process-step h4{font-size:0.9rem;font-weight:600;margin-bottom:0.3rem;}
+  .process-step p{font-size:0.78rem;color:var(--steel);}
+
+  /* ---- Contact ---- */
+  .contact-box{
+    border:1px solid var(--border);border-radius:6px;padding:4rem 3rem;
+    background:linear-gradient(135deg, rgba(37,99,235,0.06), rgba(200,155,60,0.03));
+    display:grid;grid-template-columns:1fr 1fr;gap:3rem;
+  }
+  @media(max-width:800px){.contact-box{grid-template-columns:1fr;padding:2.4rem 1.6rem;}}
+  .contact-box h2{font-size:clamp(1.8rem,3vw,2.6rem);font-weight:700;line-height:1.1;margin-bottom:1rem;}
+  .contact-box p.sub{color:var(--steel);margin-bottom:1.5rem;}
+  .field{margin-bottom:1rem;}
+  .field label{font-size:0.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:0.4rem;}
+  .field input,.field select,.field textarea{
+    width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:3px;
+    padding:0.7rem 0.9rem;color:var(--white);font-family:'Manrope';font-size:0.9rem;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--blueprint);}
+  .contact-info{display:flex;flex-direction:column;gap:0.7rem;margin-top:0.4rem;font-size:0.85rem;color:var(--steel);}
+  .c-row{display:flex;align-items:center;gap:10px;transition:color .2s;}
+  a.c-row:hover{color:var(--cyan);}
+  .c-ico{width:26px;height:26px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;}
+  .avail-badge{
+    display:inline-flex;align-items:center;gap:8px;padding:0.4rem 0.9rem;border:1px solid var(--border);
+    border-radius:20px;font-size:0.75rem;color:var(--steel);background:rgba(255,255,255,0.02);
+  }
+  .dot-live{width:6px;height:6px;border-radius:50%;background:#4ADE80;box-shadow:0 0 8px #4ADE80;animation:pulse-dot 2s infinite;}
+  @keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:0.35;}}
+  .social-row{display:flex;gap:0.7rem;margin-top:1.4rem;}
+  .social-row a{
+    width:36px;height:36px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;
+    justify-content:center;font-size:0.72rem;font-weight:700;transition:all .25s;
+  }
+  .social-row a:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-3px);}
+  .mini-map{
+    position:relative;height:120px;margin-top:1.6rem;border:1px solid var(--border);border-radius:4px;
+    overflow:hidden;background:#12151b;
+  }
+  .mini-map-grid{
+    position:absolute;inset:0;background-image:linear-gradient(rgba(37,99,235,0.16) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,0.16) 1px,transparent 1px);
+    background-size:16px 16px;
+  }
+  .mini-map-pin{
+    position:absolute;left:38%;top:44%;width:12px;height:12px;background:var(--gold);border-radius:50% 50% 50% 0;
+    transform:rotate(-45deg);box-shadow:0 0 14px var(--gold);
+  }
+  .mini-map-pin::after{content:'';position:absolute;inset:0;border-radius:50%;border:1px solid var(--gold);animation:ping-pin 1.8s infinite;}
+  @keyframes ping-pin{0%{transform:scale(1);opacity:0.7;}100%{transform:scale(3);opacity:0;}}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .form-note{font-size:0.72rem;color:var(--steel);text-align:center;margin-top:0.8rem;}
+
+  footer{padding:3rem 5vw;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+  footer p{font-size:0.8rem;color:var(--steel);}
+  .fade-up{opacity:0;transform:translateY(36px);}
+</style>
+</head>
+<body>
+
+<canvas id="bg-mesh"></canvas>
+<div class="bg-noise"></div>
+<div id="progress"></div>
+<div id="cursor-glow"></div>
+
+<nav id="nav">
+  <div class="logo">Md. ABu<span>.</span>Hanip</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#expertise">Expertise</a>
+    <a href="#projects">Projects</a>
+    <a href="#process">Process</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <a href="#contact" class="nav-cta">Start a project</a>
+</nav>
+
+<section class="hero" id="hero">
+  <div class="bp-grid" data-parallax="-0.35"></div>
+  <div class="bp-vignette"></div>
+  <div class="sheet-border"><i></i><i></i><i></i><i></i></div>
+  <div class="hero-watermark" data-parallax="0.06" aria-hidden="true">12.0</div>
+
+  <div class="sheet-meta">
+    <span><span class="dot"></span>SHEET <span class="hl">SK–001</span> / STRUCTURAL CONCEPT</span>
+    <span class="right">SCALE NTS &nbsp;·&nbsp; REV A &nbsp;·&nbsp; 2026</span>
+  </div>
+
+  <div class="hero-headline">
+    <h1 id="hero-h1">
+      <span class="line line-a" data-parallax="0.5">I design</span>
+      <span class="line line-b" data-parallax="0.75">structures that</span>
+      <span class="line line-c accent" data-parallax="1.1">CARRY&nbsp;REAL&nbsp;LOAD</span>
+      <span class="line line-d thin" data-parallax="0.5">not just approvals.</span>
+    </h1>
+    <p class="sub" data-parallax="0.4">Engr. Hanip, P.Eng. — 18 years designing high-rises, bridges, and industrial facilities across South Asia. Every drawing is stamped for construction, not for the portfolio.</p>
+    <div class="hero-ctas" data-parallax="0.4">
+      <a href="#projects" class="btn-primary magnetic">See the projects →</a>
+      <a href="cv.pdf" download="EngrHanip-CV.pdf" class="btn-ghost magnetic">
+        Download CV
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M6 11l6 6 6-6"/><path d="M4 21h16"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="beam-stage" data-parallax="0.15">
+    <div class="beam-hud">
+      <div><div class="hud-label">Load</div><div class="hud-val"><span id="hud-load">0</span> kN</div></div>
+      <div><div class="hud-label">Moment</div><div class="hud-val"><span id="hud-moment">0</span> kN·m</div></div>
+      <div><div class="hud-label">Deflection</div><div class="hud-val"><span id="hud-defl">0.0</span> mm</div></div>
+    </div>
+    <svg id="beam-svg" viewBox="0 0 1200 220" preserveAspectRatio="none">
+      <line id="dim-line" x1="60" y1="196" x2="1140" y2="196" stroke="#4B5563" stroke-width="1"/>
+      <line x1="60" y1="190" x2="60" y2="202" stroke="#4B5563" stroke-width="1"/>
+      <line x1="1140" y1="190" x2="1140" y2="202" stroke="#4B5563" stroke-width="1"/>
+      <text x="600" y="214" fill="#6B7280" font-size="11" text-anchor="middle" font-family="Space Grotesk, monospace">SPAN L = 12.0 m</text>
+
+      <polygon points="60,150 48,172 72,172" fill="none" stroke="#2563EB" stroke-width="1.4"/>
+      <polygon points="1140,150 1128,172 1152,172" fill="none" stroke="#2563EB" stroke-width="1.4"/>
+      <line x1="42" y1="176" x2="78" y2="176" stroke="#2563EB" stroke-width="1"/>
+      <line x1="1122" y1="176" x2="1158" y2="176" stroke="#2563EB" stroke-width="1"/>
+
+      <path id="beam-path" d="M 60 150 L 1140 150" fill="none" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round"/>
+      <line id="load-line" x1="600" y1="60" x2="600" y2="150" stroke="#C89B3C" stroke-width="1.6" opacity="0"/>
+      <polygon id="load-arrow" points="600,150 593,132 607,132" fill="#C89B3C" opacity="0"/>
+    </svg>
+    <p class="beam-caption">Move your cursor across the beam — this is a <b>live simply-supported beam</b> under a point load, calculated in real time from the standard deflection equation.</p>
+  </div>
+
+  <div class="title-block">
+    <div class="tb-group">
+      <span>Drawn — <b>Engr. Hanip</b></span>
+      <span>Checked — <b>Self</b></span>
+    </div>
+    <span>Structural Concept Sheet — <b>Not For Construction</b></span>
+  </div>
+</section>
+
+<section id="about">
+  <div class="sec-num" data-parallax-sec="0.08">01</div>
+  <div class="about-grid">
+    <div class="about-frame fade-up" style="overflow:hidden;">
+      <img data-parallax-y="1" src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=700&q=80" alt="Rashed Chowdhury on site" style="transform:scale(1.15);">
+    </div>
+    <div class="about-copy fade-up">
+      <span class="eyebrow">About</span>
+      <h2 style="margin-top:0.8rem;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;">Trained on codes. Proven on sites.</h2>
+      <p>I started as a site engineer pouring concrete in Chattogram's monsoon season, before moving into structural design for mid- and high-rise developments. That order matters — I design for what actually happens on a construction site, not just what passes an ETABS check.</p>
+      <p>Diploma in Civil Engineering, P.Eng. licensed, and lead structural designer on projects ranging from 12-storey residential towers to a 40m-span industrial warehouse for a garment manufacturer. I run every project through the same discipline: survey, model, analyze, document, supervise.</p>
+      <div class="stat-row">
+        <div class="stat-card"><span class="num">62</span><p>Projects completed</p></div>
+        <div class="stat-card"><span class="num">14</span><p>Years experience</p></div>
+        <div class="stat-card"><span class="num">28</span><p>Active clients</p></div>
+        <div class="stat-card"><span class="num">3</span><p>Countries</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="expertise">
+  <div class="sec-num" data-parallax-sec="0.1">02</div>
+  <div class="section-head fade-up">
+    <span class="eyebrow">Expertise</span>
+    <h2>Six disciplines, one structural model.</h2>
+    <p>I don't hand off between "design" and "construction" teams — the same engineer who runs the analysis supervises the pour.</p>
+  </div>
+  <div class="expertise-grid">
+    <div class="ex-card fade-up"><span class="idx">01</span><h3>Structural Analysis &amp; Design</h3><p>Full structural systems for RC and steel buildings, modeled in ETABS/SAP2000 and checked against BNBC and ACI provisions.</p></div>
+    <div class="ex-card fade-up"><span class="idx">02</span><h3>Foundation Engineering</h3><p>Mat, pile, and combined footing design calibrated to actual geotechnical borelog data, not assumed bearing capacity.</p></div>
+    <div class="ex-card fade-up"><span class="idx">03</span><h3>Reinforced Concrete Detailing</h3><p>Constructible RC drawings with bar bending schedules that site engineers can actually follow without a phone call.</p></div>
+    <div class="ex-card fade-up"><span class="idx">04</span><h3>Steel Structures</h3><p>Pre-engineered and conventional steel framing for warehouses and industrial sheds, optimized for fabrication cost.</p></div>
+    <div class="ex-card fade-up"><span class="idx">05</span><h3>Construction Supervision</h3><p>On-site QA/QC during pour and erection — the phase where most design intent gets lost if no one is watching.</p></div>
+    <div class="ex-card fade-up"><span class="idx">06</span><h3>Project &amp; Site Planning</h3><p>Primavera-scheduled construction sequencing that accounts for real crew sizes and material lead times.</p></div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="sec-num" data-parallax-sec="0.08">03</div>
+  <div class="section-head fade-up">
+    <span class="eyebrow">Featured Work</span>
+    <h2>Selected projects, 2019–2025.</h2>
+    <p>Each project below was designed, documented, and supervised through completion — not just rendered.</p>
+  </div>
+  <div class="proj-grid">
+    <div class="proj-card tall fade-up">
+      <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=900&q=80" alt="Residential tower" data-parallax-y="1">
+      <div class="proj-overlay">
+        <span class="tag">Residential · Dhaka</span>
+        <h3>Meridian Heights — 14-Storey Residential Tower</h3>
+        <div class="proj-meta"><span>2023</span><span>9,800 m²</span><span>Lead Structural Engineer</span></div>
+      </div>
+    </div>
+    <div class="proj-card fade-up">
+      <img src="https://images.unsplash.com/photo-1590486803833-1c5dc8ddd4c8?w=900&q=80" alt="Industrial warehouse" data-parallax-y="1">
+      <div class="proj-overlay">
+        <span class="tag">Industrial · Gazipur</span>
+        <h3>Anwar Garments Warehouse — 40m Clear-Span Steel Structure</h3>
+        <div class="proj-meta"><span>2022</span><span>6,200 m²</span><span>Structural Designer</span></div>
+      </div>
+    </div>
+    <div class="proj-card fade-up">
+      <img src="https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=900&q=80" alt="Bridge structure" data-parallax-y="1">
+      <div class="proj-overlay">
+        <span class="tag">Infrastructure · Chattogram</span>
+        <h3>Karnaphuli Access Bridge — Foundation &amp; Superstructure Design</h3>
+        <div class="proj-meta"><span>2021</span><span>340m span</span><span>Foundation Engineer</span></div>
+      </div>
+    </div>
+    <div class="proj-card fade-up">
+      <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=900&q=80" alt="Commercial building" data-parallax-y="1">
+      <div class="proj-overlay">
+        <span class="tag">Commercial · Dhaka</span>
+        <h3>Gulshan Business Court — Mixed-Use Commercial Complex</h3>
+        <div class="proj-meta"><span>2024</span><span>12,400 m²</span><span>Lead Structural Engineer</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="sec-num" data-parallax-sec="0.1">04</div>
+  <div class="section-head fade-up">
+    <span class="eyebrow">How I Work</span>
+    <h2>From survey to occupancy certificate.</h2>
+  </div>
+  <div class="process-track fade-up">
+    <div class="process-step"><div class="step-num">01</div><h4>Site Survey</h4><p>Topographic &amp; geotechnical data collection.</p></div>
+    <div class="process-step"><div class="step-num">02</div><h4>Planning</h4><p>Load paths, code checks, feasibility.</p></div>
+    <div class="process-step"><div class="step-num">03</div><h4>Design</h4><p>Full structural modeling &amp; analysis.</p></div>
+    <div class="process-step"><div class="step-num">04</div><h4>Documentation</h4><p>Construction-ready drawing sets.</p></div>
+    <div class="process-step"><div class="step-num">05</div><h4>Approval</h4><p>Authority submission &amp; sign-off.</p></div>
+    <div class="process-step"><div class="step-num">06</div><h4>Construction</h4><p>On-site supervision &amp; QA/QC.</p></div>
+    <div class="process-step"><div class="step-num">07</div><h4>Inspection</h4><p>Structural verification at milestones.</p></div>
+    <div class="process-step"><div class="step-num">08</div><h4>Completion</h4><p>Handover &amp; occupancy certification.</p></div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="sec-num" data-parallax-sec="0.08">05</div>
+  <div class="section-head fade-up">
+    <span class="eyebrow"><span class="eyebrow-line"></span>Contact</span>
+    <h2>Let's build something that stands.</h2>
+    <p>Tell me about the project — I respond to every serious inquiry within 24 hours.</p>
+  </div>
+
+  <div class="contact-box fade-up">
+    <div>
+      <div class="avail-badge"><span class="dot-live"></span>Currently booking Q4 2026 projects</div>
+      <h2 style="font-size:clamp(1.5rem,2.4vw,2rem);margin:1.2rem 0 0.6rem;">Direct line, no gatekeeping.</h2>
+      <p class="sub" style="margin-bottom:1.4rem;">Every inquiry goes straight to me — no account managers, no junior screening calls.</p>
+      <div class="contact-info">
+        <a href="mailto:rashed.chowdhury@example.com" class="c-row"><span class="c-ico">✉</span>rashed.chowdhury@example.com</a>
+        <a href="tel:+8801XXXXXXXXX" class="c-row"><span class="c-ico">☎</span>+880 1XXX-XXXXXX</a>
+        <div class="c-row"><span class="c-ico">⌖</span>Chattogram, Bangladesh — projects nationwide</div>
+      </div>
+      <div class="social-row">
+        <a href="#" aria-label="LinkedIn">in</a>
+        <a href="#" aria-label="Behance">Be</a>
+        <a href="#" aria-label="Instagram">ig</a>
+      </div>
+      <div class="mini-map" aria-hidden="true">
+        <div class="mini-map-grid"></div>
+        <div class="mini-map-pin"></div>
+      </div>
+    </div>
+    <form onsubmit="return false;">
+      <div class="field"><label>Name</label><input type="text" placeholder="Your name"></div>
+      <div class="field"><label>Email</label><input type="email" placeholder="you@company.com"></div>
+      <div class="field-row">
+        <div class="field"><label>Project Type</label>
+          <select><option>Residential</option><option>Commercial</option><option>Industrial</option><option>Infrastructure</option></select>
+        </div>
+        <div class="field"><label>Budget Range</label>
+          <select><option>Under ৳50L</option><option>৳50L – 2Cr</option><option>৳2Cr – 10Cr</option><option>10Cr+</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Message</label><textarea rows="3" placeholder="Tell me about the project"></textarea></div>
+      <button class="btn-primary magnetic" style="width:100%;justify-content:center;border:none;cursor:pointer;">Send inquiry →</button>
+      <p class="form-note">No credit card, no obligation — just a real conversation about the project.</p>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="logo" style="font-size:0.9rem;">RASHED<span>.</span>CHOWDHURY</div>
+  <p>© 2026 Rashed Chowdhury, P.Eng. — Licensed Structural Engineer.</p>
+</footer>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// Nav solid on scroll
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('solid', window.scrollY > 60);
+});
+
+// Fade-up reveals
+gsap.utils.toArray('.fade-up').forEach((el, i) => {
+  gsap.to(el, {
+    opacity:1, y:0, duration:0.9, ease:'power3.out',
+    scrollTrigger:{ trigger:el, start:'top 85%' }
+  });
+});
+
+// ---- Hero entrance: each headline line reveals via clip-path wipe ----
+gsap.set('.hero-headline .line', { clipPath:'inset(0 0 100% 0)', opacity:1 });
+gsap.to('.hero-headline .line', {
+  clipPath:'inset(0 0 0% 0)', duration:0.9, stagger:0.12, ease:'power4.out', delay:0.2
+});
+gsap.from('.hero-watermark', { opacity:0, duration:1.8, ease:'power2.out', delay:0.1 });
+gsap.from('.sheet-meta, .hero p.sub, .hero-ctas, .beam-stage, .title-block', {
+  opacity:0, y:24, duration:0.9, stagger:0.1, ease:'power3.out', delay:0.7
+});
+
+// ---- Scroll progress bar ----
+const progress = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+  progress.style.width = pct + '%';
+});
+
+// ---- Cursor glow follower ----
+const glow = document.getElementById('cursor-glow');
+window.addEventListener('mousemove', e => {
+  gsap.to(glow, { x: e.clientX, y: e.clientY, duration:0.6, ease:'power3.out' });
+});
+
+// ---- Magnetic buttons ----
+document.querySelectorAll('.magnetic').forEach(btn => {
+  btn.addEventListener('mousemove', e => {
+    const r = btn.getBoundingClientRect();
+    const x = (e.clientX - r.left - r.width/2) * 0.28;
+    const y = (e.clientY - r.top - r.height/2) * 0.35;
+    gsap.to(btn, { x, y, duration:0.35, ease:'power3.out' });
+  });
+  btn.addEventListener('mouseleave', () => {
+    gsap.to(btn, { x:0, y:0, duration:0.5, ease:'elastic.out(1,0.4)' });
+  });
+});
+
+// ---- Parallax: section numeral watermarks drift as each section scrolls through ----
+gsap.utils.toArray('[data-parallax-sec]').forEach(el => {
+  const speed = parseFloat(el.dataset.parallaxSec);
+  gsap.to(el, {
+    y: speed * -320, ease:'none',
+    scrollTrigger:{ trigger: el.closest('section'), start:'top bottom', end:'bottom top', scrub:0.5 }
+  });
+});
+
+// ---- Eyebrow underline draw-in ----
+gsap.utils.toArray('.eyebrow-line').forEach(el => {
+  gsap.to(el, { scaleX:1, duration:0.6, ease:'power2.out', scrollTrigger:{ trigger:el, start:'top 90%' } });
+});
+
+// ---- Parallax: hero layers drift at clearly distinct speeds (depth cue) ----
+gsap.utils.toArray('[data-parallax]').forEach(el => {
+  const speed = parseFloat(el.dataset.parallax);
+  gsap.to(el, {
+    y: speed * -260, // px — strong enough to be felt, tuned per-layer via data-parallax
+    ease:'none',
+    scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:0.4 }
+  });
+});
+
+// ---- Parallax: image drift + subtle scale inside frames (about + projects) ----
+gsap.utils.toArray('[data-parallax-y]').forEach(img => {
+  gsap.fromTo(img, { yPercent:-16, scale:1.18 }, {
+    yPercent:16, scale:1.05, ease:'none',
+    scrollTrigger:{ trigger:img, start:'top bottom', end:'bottom top', scrub:0.5 }
+  });
+});
+
+// Counters
+gsap.utils.toArray('.num').forEach(el=>{
+  const raw = el.textContent.trim();
+  const match = raw.match(/[\d.]+/);
+  if(!match) return;
+  const target = parseFloat(match[0]);
+  const suffix = raw.replace(match[0],'');
+  let obj = {val:0};
+  ScrollTrigger.create({
+    trigger:el, start:'top 90%', once:true,
+    onEnter:()=> gsap.to(obj,{val:target,duration:1.6,ease:'power2.out',
+      onUpdate:()=> el.textContent = (Number.isInteger(target)? Math.floor(obj.val): obj.val.toFixed(0)) + suffix
+    })
+  });
+});
+
+// ==========================================================================
+// Live beam instrument — the hero's signature element.
+// Simply-supported beam, length L, point load P at position a from the
+// left support (b = L - a). Standard Euler-Bernoulli deflection equation,
+// scaled for visual clarity rather than literal units. Cursor position
+// sets load position (x-axis) and proximity to the beam sets load magnitude.
+// ==========================================================================
+(function(){
+  const svg = document.getElementById('beam-svg');
+  const beamPath = document.getElementById('beam-path');
+  const loadLine = document.getElementById('load-line');
+  const loadArrow = document.getElementById('load-arrow');
+  const hudLoad = document.getElementById('hud-load');
+  const hudMoment = document.getElementById('hud-moment');
+  const hudDefl = document.getElementById('hud-defl');
+
+  const X0 = 60, X1 = 1140, Y0 = 150; // beam endpoints & rest elevation in viewBox units
+  const L = X1 - X0;
+  const EI = 5.5e6; // arbitrary stiffness tuned for a pleasant on-screen deflection
+  let targetP = 0, targetA = L/2;
+  let curP = 0, curA = L/2;
+  const reduceMotion2 = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function deflectionAt(x, P, a){
+    const b = L - a;
+    if (P <= 0.01) return 0;
+    if (x <= a){
+      return (P*b*x)/(6*L) * (L*L - b*b - x*x) / EI;
+    } else {
+      const xr = L - x, ar = b; // symmetry trick for the right segment
+      return (P*ar*xr)/(6*L) * (L*L - ar*ar - xr*xr) / EI;
+    }
+  }
+
+  function updateHUD(P, a){
+    const b = L - a;
+    const kn = (P * 8).toFixed(0);              // cosmetic kN readout
+    const moment = ((P * a * b) / L * 0.09).toFixed(1); // cosmetic kN·m readout
+    const maxDefl = Math.abs(deflectionAt(a, P, a)) * 240; // cosmetic mm readout
+    hudLoad.textContent = kn;
+    hudMoment.textContent = moment;
+    hudDefl.textContent = maxDefl.toFixed(1);
+  }
+
+  function render(){
+    curP += (targetP - curP) * 0.12;
+    curA += (targetA - curA) * 0.12;
+
+    let d = `M ${X0} ${Y0}`;
+    const steps = 48;
+    for(let i=1;i<=steps;i++){
+      const x = (i/steps) * L;
+      const y = Y0 + deflectionAt(x, curP, curA) * 26000; // amplify for visibility
+      d += ` L ${(X0+x).toFixed(1)} ${y.toFixed(2)}`;
+    }
+    beamPath.setAttribute('d', d);
+
+    const loadY = Y0 + deflectionAt(curA, curP, curA) * 26000;
+    loadLine.setAttribute('x1', X0+curA); loadLine.setAttribute('x2', X0+curA);
+    loadLine.setAttribute('y2', loadY);
+    loadArrow.setAttribute('points', `${X0+curA},${loadY} ${X0+curA-7},${loadY-18} ${X0+curA+7},${loadY-18}`);
+    const op = Math.min(curP/1, 1);
+    loadLine.style.opacity = op; loadArrow.style.opacity = op;
+
+    updateHUD(curP, curA);
+    requestAnimationFrame(render);
+  }
+
+  function setLoadFromEvent(clientX, clientY){
+    const r = svg.getBoundingClientRect();
+    const relX = Math.min(Math.max((clientX - r.left) / r.width, 0), 1);
+    targetA = relX * L;
+    const relY = (clientY - r.top) / r.height;
+    // closer to beam line (relY around 0.68) = fuller load; scale 0–1
+    targetP = Math.max(0, 1 - Math.abs(relY - 0.68) * 1.4);
+  }
+
+  svg.addEventListener('mousemove', e => setLoadFromEvent(e.clientX, e.clientY));
+  svg.addEventListener('touchmove', e => {
+    if(e.touches[0]) setLoadFromEvent(e.touches[0].clientX, e.touches[0].clientY);
+  }, {passive:true});
+  svg.addEventListener('mouseleave', () => { targetP = 0; });
+  svg.addEventListener('touchend', () => { targetP = 0; });
+
+  // gentle idle motion so the beam isn't dead before the user interacts
+  let idleT = 0;
+  setInterval(()=>{
+    if(curP < 0.02 && targetP < 0.02){
+      idleT += 0.15;
+      targetA = L/2 + Math.sin(idleT)*L*0.22;
+      targetP = reduceMotion2 ? 0 : 0.22 + Math.sin(idleT*0.6)*0.06;
+    }
+  }, 60);
+
+  render();
+})();
+
+// ==========================================================================
+// Site-wide abstract background: a slow-drifting structural truss / load-path
+// mesh. Nodes = joints, lines = members, occasional arrows = load transfer.
+// Deliberately quiet — reads as "engineering" without competing with copy.
+// ==========================================================================
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const bgCanvas = document.getElementById('bg-mesh');
+const bctx = bgCanvas.getContext('2d');
+let W, H, nodes = [], DPR = Math.min(window.devicePixelRatio||1, 2);
+
+function sizeBg(){
+  W = window.innerWidth; H = document.documentElement.scrollHeight;
+  bgCanvas.width = W*DPR; bgCanvas.height = window.innerHeight*DPR;
+  bgCanvas.style.width = W+'px'; bgCanvas.style.height = window.innerHeight+'px';
+  bctx.setTransform(DPR,0,0,DPR,0,0);
+}
+function buildNodes(){
+  nodes = [];
+  const cols = Math.round(W/150), rows = Math.round(window.innerHeight/150);
+  for(let i=0;i<=cols;i++){
+    for(let j=0;j<=rows;j++){
+      if(Math.random() > 0.62) continue; // sparse, irregular truss — not a rigid grid
+      nodes.push({
+        x: (i/cols)*W + (Math.random()-0.5)*70,
+        y: (j/rows)*window.innerHeight + (Math.random()-0.5)*70,
+        baseX:0, baseY:0, phase: Math.random()*Math.PI*2,
+        r: Math.random()*1.4+0.6
+      });
+    }
+  }
+  nodes.forEach(n=>{ n.baseX=n.x; n.baseY=n.y; });
+}
+sizeBg(); buildNodes();
+window.addEventListener('resize', ()=>{ sizeBg(); buildNodes(); });
+
+const MAXD = 190;
+let bgT = 0, scrollOffset = 0;
+window.addEventListener('scroll', ()=>{ scrollOffset = window.scrollY * 0.04; });
+
+function drawBg(){
+  bctx.clearRect(0,0,W,window.innerHeight);
+  bgT += reduceMotion? 0 : 0.006;
+
+  // gentle sway per node (like thermal movement in a structure, not wind-blown)
+  nodes.forEach(n=>{
+    n.x = n.baseX + Math.sin(bgT + n.phase)*6;
+    n.y = n.baseY + Math.cos(bgT*0.8 + n.phase)*6 - scrollOffset;
+  });
+
+  // members: connect nearby nodes
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      const a=nodes[i], b=nodes[j];
+      const dx=a.x-b.x, dy=a.y-b.y, d=Math.sqrt(dx*dx+dy*dy);
+      if(d < MAXD){
+        const o = (1 - d/MAXD) * 0.16;
+        bctx.strokeStyle = `rgba(37,99,235,${o})`;
+        bctx.lineWidth = 0.6;
+        bctx.beginPath(); bctx.moveTo(a.x,a.y); bctx.lineTo(b.x,b.y); bctx.stroke();
+      }
+    }
+  }
+  // joints
+  nodes.forEach((n,i)=>{
+    bctx.beginPath();
+    bctx.fillStyle = i % 17 === 0 ? 'rgba(200,155,60,0.5)' : 'rgba(56,189,248,0.35)';
+    bctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+    bctx.fill();
+  });
+
+  requestAnimationFrame(drawBg);
+}
+drawBg();
+</script>
+
+</body>
+</html>
